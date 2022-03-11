@@ -1,0 +1,21 @@
+# parameterize                               A        B        C    [        D        ]
+curl -LJ https://raw.githubusercontent.com/ejsa13/pcfocp-poc/main/config/application.properties -o app.properties
+
+# copy template
+cp configmap-template.yaml configmap.yaml
+
+# add spaces
+sed -i'' -e 's/^/    /' app.properties
+rm app.properties-e
+
+# append properties file to configmap.yaml
+cat app.properties | tee -a configmap.yaml
+
+# clean-up
+rm app.properties
+
+# do oc login
+# oc login -u <username> -p <password> --server <url>
+
+# create / update configmap
+# kubectl apply -f configmap.yaml

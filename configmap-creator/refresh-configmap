@@ -1,0 +1,25 @@
+# parameterize                               A        B        C    [        D        ]
+curl -LJ https://raw.githubusercontent.com/ejsa13/pcfocp-poc/main/config/application.properties -o app.properties
+
+# get checksum
+shm_id=$(cat app.properties | openssl sha256)
+echo $shm_id
+
+#download configmap.yaml
+yq eval '.data.*' configmap.yaml >> configmap.properties 
+
+#remove extra new line at EOF
+truncate -s -1 configmap.properties
+
+# get checksum
+config_id=$(cat configmap.properties | openssl sha256)
+echo $config_id
+
+# clean-up
+rm app.properties
+rm configmap.properties
+
+#if $shm_id != $config_id call ./create-configmap
+if [ "$shmd_id" != "$config_id" ]; then
+    ./create-configmap
+fi 
