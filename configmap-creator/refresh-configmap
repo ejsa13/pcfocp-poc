@@ -1,5 +1,4 @@
-# parameterize                               A        B        C    [        D        ] OR use ENV vars
-curl -LJ https://raw.githubusercontent.com/ejsa13/pcfocp-poc/main/config/application.properties -o app.properties
+./download-properties
 
 # get checksum
 shm_id=$(cat app.properties | openssl sha256)

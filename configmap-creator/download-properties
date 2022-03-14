@@ -1,0 +1,2 @@
+# parameterize                               A        B        C    [        D        ] OR use ENV vars
+curl -LJ https://raw.githubusercontent.com/ejsa13/pcfocp-poc/main/configmap.properties -o app.properties
