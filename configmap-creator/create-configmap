@@ -18,4 +18,4 @@ rm app.properties
 # oc login -u <username> -p <password> --server <url>
 
 # create / update configmap
-# kubectl apply -f configmap.yaml
+# oc apply -f configmap.yaml
