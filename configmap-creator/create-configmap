@@ -1,20 +1,37 @@
-./download-properties
+#!/bin/sh
+while getopts a:p: flag
+do
+    case "${flag}" in
+        a) OCP_APP_NAME=${OPTARG};;
+        p) OCP_PROJECT=${OPTARG};;
+    esac
+done
+
+if [ -z "${OCP_PROJECT}" ]; then
+    OCP_PROJECT=poc
+else
+    OCP_PROJECT="${OCP_PROJECT}"
+fi
+
+if [ -z "${OCP_APP_NAME}" ]; then
+    OCP_APP_NAME=config-client
+else
+    OCP_APP_NAME="${OCP_APP_NAME}"
+fi
 
 # copy template
 cp configmap-template.yaml configmap.yaml
 
 # add spaces
 sed -i'' -e 's/^/    /' app.properties
-rm app.properties-e
 
 # append properties file to configmap.yaml
 cat app.properties | tee -a configmap.yaml
 
+sed -i'' -e "s/OCP_APP_NAME/${OCP_APP_NAME}/g" configmap.yaml
+sed -i'' -e "s/OCP_PROJECT/${OCP_PROJECT}/g" configmap.yaml
+
 # clean-up
 rm app.properties
-
-# do oc login
-# oc login -u <username> -p <password> --server <url>
-
-# create / update configmap
-# oc apply -f configmap.yaml
+rm app.properties-e
+rm configmap.yaml-e
