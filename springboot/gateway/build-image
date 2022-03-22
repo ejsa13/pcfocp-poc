@@ -1,4 +1,4 @@
 ./mvnw package 
-docker build -t service .
+docker build -t config-gateway .
 
 # docker run -p 8080:8080 -e SPRING_CLOUD_CONFIG_ENABLED=false -v 
