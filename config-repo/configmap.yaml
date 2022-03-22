@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: OCP_APP_NAME
-  namespace: OCP_PROJECT
+  name: config-client
 data:
   application.properties: |-
+    welcome.message: welcome spring k8s
