@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: config-client
+  labels:
+    app: config-client
+    service: config-client
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: config-client
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: config-client-preview
+  labels:
+    app: config-client
+    service: config-client
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: config-client
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: config-client
+  labels:
+    app: config-client
+    version: v1
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: config-client
+      version: v1      
+  strategy:
+    blueGreen:
+      activeService: config-client
+      previewService: config-client-preview 
+  template:
+    metadata:
+      labels:
+        app: config-client
+        version: v1
+      annotations:
+        sidecar.istio.io/inject: "true"
+    spec:
+      serviceAccountName: spring-cloud-sa
+      containers:
+      - name: config-client
+        image: quay.io/estaana/config-client:0.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+          - name: SPRING_CLOUD_CONFIG_ENABLED
+            value: 'false'   
+ 
+#---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: config-client
+#   labels:
+#     app: config-client
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: config-client
+#   template:
+#     metadata:
+#       labels:
+#         app: config-client
+#     spec:
+#       serviceAccountName: spring-cloud-sa
+#       containers:
+#       - name: config-client
+#         image: quay.io/estaana/config-client:latest
+#         imagePullPolicy: IfNotPresent
+#         ports:
+#         - containerPort: 8080
+#         env:
+#           - name: SPRING_CLOUD_CONFIG_ENABLED
+#             value: 'false'

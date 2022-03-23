@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: config-service
+  labels:
+    app: config-service
+    service: config-service
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: config-service
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: config-service
+  labels:
+    account: config-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-service
+  labels:
+    app: config-service
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: config-service
+      version: v1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+      labels:
+        app: config-service
+        version: v1
+    spec:
+      serviceAccountName: config-service
+      containers:
+      - name: config-service
+        image: quay.io/estaana/config-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
